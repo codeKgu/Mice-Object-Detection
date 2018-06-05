@@ -6,7 +6,8 @@ Relevant code to project in mice object detection and realtime processing
 3. [Training](#training)
 4. [Results](#viewing-results)
 5. [Changing Source Code](#changing-source-code)
-6. [Real Time Detection with Camera](#real-time-detection-with-camera)
+6. [Analysis of Video Files](#analysis-of-video-files)
+7. [Real Time Detection with Camera](#real-time-processing)
 
 
 ## Overview
@@ -26,7 +27,7 @@ Training images and video is from Professor Weizhou
 
 ## Data Annotation
 To annotate we need to:
-* place our training images in `python scripts\BBox-Label-Tool\Images\[Numbered Folder ie. 001, 002, etc]`
+* place our training images in `yolo_processing\BBox-Label-Tool\Images\[Numbered Folder ie. 001, 002, etc]`
 * open Bbox-Label-Tool by running `main.py` in the BBox-label-Tool directory
 
 Labels will be in `python scripts\BBox-Label-Tool\Labels` with the same numbered directory as the images in .txt files with the resulting format:
@@ -36,7 +37,7 @@ Labels will be in `python scripts\BBox-Label-Tool\Labels` with the same numbered
 ...
 ```
 
-Note, the BBox-Label-Tool requires images to be .jpeg files but that can be adjusted by changing the code in main.py
+Note, the BBox-Label-Tool requires images to be .jpeg files but that can be adjusted to .jpg by changing the code in main.py
 
 ### Convert to YOLOv2 Format
 
@@ -44,10 +45,15 @@ YOLOv2 takes labels of the form
 ```
 [category number] [object center in X] [object center in Y] [object width in X] [object width in Y]
 ```
-To fix this there is a script in `python scripts\convert_to_yolo.py` which converts to the YOLO format
+To fix this there is a script in `python scripts\convert_to_yolo.py` which converts to the YOLO format. Change the paths `mypath` and `outpath` in `convert_to_yolo_.py`
+
+### Other files
+`change_classes.py` was used to change from two classes to one class.
+`rename_same.py` adds an extension to the file name for same file names.
+`rename.py` if ever files of the form cvrt-wM-06305.png.txt converts them to cvrt-wM-06305.txt
 
 ## Darknet Configuration 
-Darknet needs you to tell it what images are going to be the test set and training set. To do this there `process.py` which takes images and plits up into a test and train set written to test.txt and train.txt.
+Darknet needs you to tell it what images are going to be the test set and training set. To do this there `process.py` which takes images and splits up into a test and train set written to test.txt and train.txt which is used by darknet. Furthermore, `process.py` is to be run in the same folder as the images. 
 
 Next Darknet needs specific configuration files.  Three files needs to be created. 
 * `obj.data` in `\darknet\build\darknet\x64\data\cfg`which takes the following format
@@ -109,6 +115,38 @@ darknet.exe detector demo data/obj.data obj/yolo-obj.cfg backup/yolo-obj_1600.we
  ## Changing Source Code
  To use the output of the network for postprocessing and analysis we can print the bounding box locations to stdout and using another 
  python script to process that in any way necessary. 
- To change the source code open darknet.sln in `/darknet/build/darknet/`. `image.c` contains drawing the borders in the `draw_detections_cv` function which is used in `demo.c`. For YOLOv3 this is `draw_detections_cv_v3`. I have changed the source code to add a midpoint of the bounding box as well as get the frame number of the the video file. 
+ To change the source code open darknet.sln in `/darknet/build/darknet/`. `image.c` contains drawing the borders in the `draw_detections_cv` function which is used in `demo.c`. For YOLOv3 this is `draw_detections_cv_v3`. I have changed the source code to add a midpoint of the bounding box. For YOLOv2 I was able to get the frame number in `demo.c`.
+ ```
+double frame_num = cvGetCaptureProperty(cap, CV_CAP_PROP_POS_FRAMES);
+int frames = (int)frame_num; 
+ ```
+ However for this new version, it does not seem to work. 
  
- ## 
+ ## Analysis of Video Files 
+ To analyze the locations of mice, I first direct the stdout (containing detections of mice) of the YOLO network to a file.
+```
+darknet.exe detector demo cfg/obj_pipe_one_class.data cfg/yolo-pipe_one_class.cfg backup_pipe1/yolo-pipe_one_class_2200.weights 
+data/weizhe_videos/april/LK96_TTexp3_full_behavCam.avi -i 0 -out_filename results/result1_LK96_TTexp3_full_behavCam.avi > results/result1_LK96_TTexp3_full_behavCam.txt -thresh 0.5
+``` 
+The output in this example is stored in `results/result1_LK96_TTexp3_full_behavCam.txt` containing data of all frames and where each frame is of the form:
+
+```
+Objects:
+frame_num: 5 
+left: 87%
+top x: 257 
+top y: 62 
+midpoint x: 190 
+midpoint y: 83 
+left: 85%
+top x: 528 
+top y: 64 
+midpoint x: 458 
+midpoint y: 83 
+```
+where the numbers are pixel coordinates and the percentage can be thought of as the confidence in the detection. 
+The path of `results/result1_LK96_TTexp3_full_behavCam.txt` is then passed to the jupyter notebook `yolo_processing/notebooks/convert_yoloy_rawout_to_csv.py.ipynb` converting the output to a csv. Samples are included in `samples`.
+
+## Real Time Processing 
+The goal of this part of the project is to use the output of the yolo detection in realtime and give commands to external hardware to affect the  experiment.
+The current implementation of realtime processing is using a python subprocess to run the yolo network and take the subprocess's stderr output and further process it before serially writing to an arduino. The code is in `realtime_processing\serial_connect.py`. 
