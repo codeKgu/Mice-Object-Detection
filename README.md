@@ -11,7 +11,10 @@ This project helped aid the experiments in the [\[paper\]](https://pubmed.ncbi.n
 [![Demo](demo.gif)](https://drive.google.com/file/d/1YMWc5DYaNvzqUyyXHwcPABQWwh78or5j/view?usp=sharing)
 
 [![Demo](demo_tube.gif)](https://drive.google.com/file/d/1X-TJBHkxDh9lJsY3UjbBEPu-C-jJ6L1W/view?usp=sharing)
+
+
 This mice are given neural signals and we want to track how they react through their position within the video.
+
 ## Tabel of Contents
 
 1. [Overview](#overview)
@@ -53,7 +56,7 @@ Labels will be in `python scripts\BBox-Label-Tool\Labels` with the same numbered
 
 Note, the BBox-Label-Tool requires images to be .jpeg files but that can be adjusted to .jpg by changing the code in main.py
 
-### Convert to YOLOv2 Format
+#### Convert to YOLOv2 Format
 
 YOLOv2 takes labels of the form 
 ```
@@ -61,7 +64,7 @@ YOLOv2 takes labels of the form
 ```
 To fix this there is a script in `python scripts\convert_to_yolo.py` which converts to the YOLO format. Change the paths `mypath` and `outpath` in `convert_to_yolo_.py`
 
-### Other files
+#### Other files
 `change_classes.py` was used to change from two classes to one class.
 `rename_same.py` adds an extension to the file name for same file names.
 `rename.py` if ever files of the form cvrt-wM-06305.png.txt converts them to cvrt-wM-06305.txt
