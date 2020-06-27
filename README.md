@@ -28,6 +28,7 @@ This mice are given neural signals and we want to track how they react through t
 
 
 ## Overview
+
 We will be training images with a [YOLOV2](https://pjreddie.com/darknet/yolo/) implementation called [darknet](https://github.com/AlexeyAB/darknet) for windows.
 
 This supports:
@@ -43,6 +44,7 @@ This requires:
 Training images and video is from Professor Weizhou
 
 ## Data Annotation
+
 To annotate we need to:
 * place our training images in `yolo_processing\BBox-Label-Tool\Images\[Numbered Folder ie. 001, 002, etc]`
 * open Bbox-Label-Tool by running `main.py` in the BBox-label-Tool directory
@@ -70,6 +72,7 @@ To fix this there is a script in `python scripts\convert_to_yolo.py` which conve
 `rename.py` if ever files of the form cvrt-wM-06305.png.txt converts them to cvrt-wM-06305.txt
 
 ## Darknet Configuration 
+
 Darknet needs you to tell it what images are going to be the test set and training set. To do this there `process.py` which takes images and splits up into a test and train set written to test.txt and train.txt which is used by darknet. Furthermore, `process.py` is to be run in the same folder as the images. 
 
 Next Darknet needs specific configuration files.  Three files needs to be created. 
@@ -94,6 +97,7 @@ Next Darknet needs specific configuration files.  Three files needs to be create
   * line 224 `filters = (Classes + 5) *5` the number of filters in the last convolutional layer
   
  ## Training
+ 
  To train, run the following command in cmd
  ```
  darknet.exe detector train data/cfg/obj.data cfg/yolo-obj.cfg darknet19_448.conv.23
@@ -111,6 +115,7 @@ Next Darknet needs specific configuration files.  Three files needs to be create
  ```
  
  ## Viewing Results
+ 
  ![result](https://github.com/codeKgu/Research-WeiZhou/blob/master/screen%20captures/test_result.JPG)
  
  We use the .weights file to run our model on new images. 
@@ -130,6 +135,7 @@ darknet.exe detector demo data/obj.data obj/yolo-obj.cfg backup/yolo-obj_1600.we
 ```
 
  ## Changing Source Code
+ 
  To use the output of the network for postprocessing and analysis we can print the bounding box locations to stdout and using another 
  python script to process that in any way necessary. 
  To change the source code open darknet.sln in `/darknet/build/darknet/`. `image.c` contains drawing the borders in the `draw_detections_cv` function which is used in `demo.c`. For YOLOv3 this is `draw_detections_cv_v3`. I have changed the source code to add a midpoint of the bounding box. For YOLOv2 I was able to get the frame number in `demo.c`.
@@ -139,7 +145,8 @@ int frames = (int)frame_num;
  ```
  However for this new version, it does not seem to work. 
  
- ## Analysis of Video Files 
+ ## Analysis of Video Files
+ 
  To analyze the locations of mice, I first direct the stdout (containing detections of mice) of the YOLO network to a file.
 ```
 darknet.exe detector demo cfg/obj_pipe_one_class.data cfg/yolo-pipe_one_class.cfg backup_pipe1/yolo-pipe_one_class_2200.weights 
@@ -165,5 +172,6 @@ where the numbers are pixel coordinates and the percentage can be thought of as 
 The path of `results/result1_LK96_TTexp3_full_behavCam.txt` is then passed to the jupyter notebook `yolo_processing/notebooks/convert_yoloy_rawout_to_csv.py.ipynb` converting the output to a csv. Samples are included in `samples`.
 
 ## Real Time Processing 
+
 The goal of this part of the project is to use the output of the yolo detection in realtime and give commands to external hardware to affect the  experiment.
 The current implementation of realtime processing is using a python subprocess to run the yolo network and take the subprocess's stderr output and further process it before serially writing to an arduino. The code is in `realtime_processing\serial_connect.py`. 
