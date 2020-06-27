@@ -1,13 +1,27 @@
-# Research-Weizhou-Code
-Relevant code to project in mice object detection and realtime processing
+# Mice Object Detection
+Relevant code to project in mice object detection and realtime processing. 
+[\[Demo\]](https://drive.google.com/file/d/1YMWc5DYaNvzqUyyXHwcPABQWwh78or5j/view?usp=sharing) 
+[\[Slides\]](https://docs.google.com/presentation/d/1SUGunykGN7G1IXJcG5yjy_yqWOMqjYtznB83klRZLOE/edit?usp=sharing)
 
-1. [Data Annotation](#data-annotation)
-2. [DarkNet Configuration](#darknet-configuration)
-3. [Training](#training)
-4. [Results](#viewing-results)
-5. [Changing Source Code](#changing-source-code)
-6. [Analysis of Video Files](#analysis-of-video-files)
-7. [Real Time Detection with Camera](#real-time-processing)
+This project helped aid the experiments in the [\[paper\]](https://pubmed.ncbi.nlm.nih.gov/31230711/)
+> Correlated Neural Activity and Encoding of Behavior across Brains of Socially Interacting Animals.
+> Lyle Kingsbury , Shan Huang, Jun Wang, ***Ken Gu***, Peyman Golshani, Ye Emily Wu, Weizhe Hong.
+> Cell 2019
+
+[![Demo](demo.gif)](https://drive.google.com/file/d/1YMWc5DYaNvzqUyyXHwcPABQWwh78or5j/view?usp=sharing)
+
+[![Demo](demo_tube.gif)](https://drive.google.com/file/d/1X-TJBHkxDh9lJsY3UjbBEPu-C-jJ6L1W/view?usp=sharing)
+This mice are given neural signals and we want to track how they react through their position within the video.
+## Tabel of Contents
+
+1. [Overview](#overview)
+2. [Data Annotation](#data-annotation)
+3. [DarkNet Configuration](#darknet-configuration)
+4. [Training](#training)
+5. [Results](#viewing-results)
+6. [Changing Source Code](#changing-source-code)
+7. [Analysis of Video Files](#analysis-of-video-files)
+8. [Real Time Detection with Camera](#real-time-processing)
 
 
 ## Overview
